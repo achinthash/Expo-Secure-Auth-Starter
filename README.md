@@ -1,50 +1,72 @@
-# Welcome to your Expo app 👋
+# Expo Secure Auth Starter
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, reusable authentication starter template built with **Expo React Native**, featuring PIN lock, biometric authentication, and dark mode support.
 
-## Get started
+This project is designed as a **plug-and-play starter kit** for apps that require secure local authentication without rebuilding the same logic from scratch.
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+- PIN-based lock screen (6-digit secure input)
+- Biometric authentication (Fingerprint)
+- Dark / Light mode support
+- Smooth and responsive UI using NativeWind
+- Local authentication state persistence
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 📱 App Preview
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+> Replace these images with your actual screenshots in `/assets/screenshots/`
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Lock Screen
 
-## Get a fresh project
+![LockScreen](./assets/screenshots/lock-screen.png)
 
-When you're ready, run:
+### Home Screen (Light Mode)
+
+![Home](./assets/screenshots/home-screen.png)
+
+### Settings Screen
+
+![setting](./assets/screenshots/setting-screen.png)
+
+### Passcode Screen
+
+![passcode](./assets/screenshots/passcode-screen.png)
+
+---
+
+## Purpose
+
+This project is built to serve as a **starter foundation** for React Native / Expo applications that require authentication.
+
+Instead of implementing PIN lock, biometrics, and theme switching repeatedly, you can:
+
+- Clone this project
+- Customize UI
+- Extend features
+
+---
+
+## Tech Stack
+
+- Expo (React Native)
+- TypeScript
+- NativeWind
+- Expo Local Authentication
+
+## Getting Started
+
+### 1. Install dependencies
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Start development server
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npx expo start
+```

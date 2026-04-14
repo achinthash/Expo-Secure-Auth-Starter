@@ -1,24 +1,72 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Stack } from "expo-router";
+import { ActivityIndicator, View } from "react-native";
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import "@/global.css";
+import { useColorScheme } from "nativewind";
+import EnterPasscode from "./components/Passcode/EnterPasscode";
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+import { useEffect, useState } from "react";
+
+function AppContent() {
+  const { hasPin, isUnlocked, isLoading } = useAuth();
+
+  const { colorScheme, setColorScheme } = useColorScheme();
+
+  const [isThemeLoaded, setIsThemeLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadTheme = async () => {
+      const savedTheme = await AsyncStorage.getItem("theme");
+
+      if (savedTheme === "light" || savedTheme === "dark") {
+        setColorScheme(savedTheme);
+      }
+
+      setIsThemeLoaded(true);
+    };
+
+    loadTheme();
+  }, []);
+
+  if (isLoading)
+    return <ActivityIndicator className="flex-1 justify-center items-center" />;
+
+  if (hasPin && !isUnlocked) {
+    return (
+      <View style={{ flex: 1 }}>
+        <EnterPasscode />
+      </View>
+    );
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <BottomSheetModalProvider>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+        </Stack>
+      </ThemeProvider>
+    </BottomSheetModalProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
