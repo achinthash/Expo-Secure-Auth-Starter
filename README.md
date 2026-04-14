@@ -16,15 +16,13 @@ This project is designed as a **plug-and-play starter kit** for apps that requir
 
 ---
 
-## 📱 App Preview
-
-> Replace these images with your actual screenshots in `/assets/screenshots/`
+## App Preview
 
 ### Lock Screen
 
 ![LockScreen](./assets/screenshots/lock-screen.png)
 
-### Home Screen (Light Mode)
+### Home Screen 
 
 ![Home](./assets/screenshots/home-screen.png)
 
