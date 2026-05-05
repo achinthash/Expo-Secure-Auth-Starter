@@ -10,12 +10,11 @@ import ChangePasscode from "@/app/components/Passcode/ChangePasscode";
 import Createpasscode from "@/app/components/Passcode/Createpasscode";
 import VerifyPasscode from "@/app/components/Passcode/VerifyPasscode";
 import { useColorScheme } from "nativewind";
-export default function passcode() {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+export default function Passcode() {
+  const { colorScheme } = useColorScheme();
 
   const isDark = colorScheme === "dark";
-  const { hasPin, isUnlocked, setIsUnlocked, isLoading, refreshPin } =
-    useAuth();
+  const { hasPin, setIsUnlocked, refreshPin } = useAuth();
 
   const [verified, setVerified] = useState(false);
   const [mode, setMode] = useState("idle");
@@ -52,7 +51,8 @@ export default function passcode() {
     return (
       <Createpasscode
         onDone={() => {
-          (setMode("idle"), setVerified(true));
+          setMode("idle");
+          setVerified(true);
         }}
       />
     );

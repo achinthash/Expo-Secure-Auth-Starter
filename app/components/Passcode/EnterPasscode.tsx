@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { getPin } from "@/utills/secureStorage";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -22,24 +22,55 @@ export default function EnterPasscode() {
   const PIN_LENGTH = 6;
   const { setIsUnlocked } = useAuth();
   const [pin, setPin] = useState("");
-  const [fingerPrintEnrolled, setFingerPrintEnrolled] = useState<
-    boolean | null
-  >(null);
+  const [fingerPrintEnrolled, setFingerPrintEnrolled] = useState(false);
 
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
 
   const isDark = colorScheme === "dark";
 
-  const checkBioMetric = async () => {
-    const hasHardware = await LocalAuthentication.hasHardwareAsync();
-    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+  useEffect(() => {
+    let isMounted = true;
 
-    if (hasHardware && isEnrolled) {
+    const checkBiometricSupport = async () => {
+      try {
+        const hasHardware = await LocalAuthentication.hasHardwareAsync();
+        const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+        if (isMounted) {
+          setFingerPrintEnrolled(hasHardware && isEnrolled);
+        }
+      } catch (e) {
+        console.log("Biometric support check error:", e);
+
+        if (isMounted) {
+          setFingerPrintEnrolled(false);
+        }
+      }
+    };
+
+    checkBiometricSupport();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const authenticateWithBiometric = useCallback(async () => {
+    try {
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+      if (!hasHardware || !isEnrolled) {
+        setFingerPrintEnrolled(false);
+        return;
+      }
+
       setFingerPrintEnrolled(true);
 
-      // check authuntication
       const result = await LocalAuthentication.authenticateAsync({
         promptMessage: "Unlock with Face or Fingerprint",
+        cancelLabel: "Use PIN",
+        disableDeviceFallback: false,
       });
 
       if (result.success) {
@@ -47,19 +78,26 @@ export default function EnterPasscode() {
       } else {
         Vibration.vibrate([0, 100]);
       }
+    } catch (e) {
+      console.log("Biometric authentication error:", e);
+      setFingerPrintEnrolled(false);
+      Vibration.vibrate([0, 100]);
     }
-  };
-
-  useEffect(() => {
-    checkBioMetric();
-  }, []);
+  }, [setIsUnlocked]);
 
   // verify enterd pin with stored pin
   const verifyPin = async (pinToVerify: string) => {
-    const savedPin = await getPin();
-    if (pinToVerify === savedPin) {
-      setIsUnlocked(true);
-    } else {
+    try {
+      const savedPin = await getPin();
+
+      if (pinToVerify === savedPin) {
+        setIsUnlocked(true);
+      } else {
+        Vibration.vibrate([0, 50, 100, 150]);
+        setPin("");
+      }
+    } catch (e) {
+      console.log("PIN verification error:", e);
       Vibration.vibrate([0, 50, 100, 150]);
       setPin("");
     }
@@ -147,7 +185,7 @@ export default function EnterPasscode() {
                 onPress={() => {
                   if (key === "del") handleDelete();
                   else if (key === "fingerprint") {
-                    checkBioMetric();
+                    authenticateWithBiometric();
                   } else {
                     pressDigit(key);
                   }

@@ -16,14 +16,12 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function AppContent() {
   const { hasPin, isUnlocked, isLoading } = useAuth();
 
   const { colorScheme, setColorScheme } = useColorScheme();
-
-  const [isThemeLoaded, setIsThemeLoaded] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
@@ -32,12 +30,10 @@ function AppContent() {
       if (savedTheme === "light" || savedTheme === "dark") {
         setColorScheme(savedTheme);
       }
-
-      setIsThemeLoaded(true);
     };
 
     loadTheme();
-  }, []);
+  }, [setColorScheme]);
 
   if (isLoading)
     return <ActivityIndicator className="flex-1 justify-center items-center" />;

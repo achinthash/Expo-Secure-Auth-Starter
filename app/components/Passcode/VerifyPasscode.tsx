@@ -8,7 +8,7 @@ import { getPin } from "@/utills/secureStorage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useColorScheme } from "nativewind";
 export default function VerifyPasscode({ onVerify }: any) {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
 
   const isDark = colorScheme === "dark";
 
@@ -119,7 +119,11 @@ export default function VerifyPasscode({ onVerify }: any) {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    key === "del" ? deleteDigit() : pressDigit(key);
+                    if (key === "del") {
+                      deleteDigit();
+                    } else {
+                      pressDigit(key);
+                    }
                   }}
                   key={colIndex}
                   className="

@@ -9,11 +9,10 @@ import { useColorScheme } from "nativewind";
 
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useMemo, useRef } from "react";
-import { StyleSheet } from "react-native";
 
 import ThemeToggle from "@/app/components/ThemeToggle";
-export default function settings() {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+export default function Settings() {
+  const { colorScheme } = useColorScheme();
 
   const isDark = colorScheme === "dark";
 
@@ -170,14 +169,3 @@ export default function settings() {
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  contentContainer: {
-    padding: 16,
-    alignItems: "center",
-  },
-});

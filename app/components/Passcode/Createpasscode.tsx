@@ -11,7 +11,7 @@ import { useColorScheme } from "nativewind";
 export default function Createpasscode({ onDone }: any) {
   const PIN_LENGTH = 6;
 
-  const { refreshPin, setHasPin } = useAuth();
+  const { setHasPin } = useAuth();
 
   const [step, setStep] = useState("create");
 
@@ -20,7 +20,7 @@ export default function Createpasscode({ onDone }: any) {
   const [error, setError] = useState("");
   const currentPin = step === "create" ? mypin : confirmPin;
 
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
 
   const isDark = colorScheme === "dark";
 
@@ -51,6 +51,7 @@ export default function Createpasscode({ onDone }: any) {
         if (mypin === newPin) {
           await save();
         } else {
+          setConfirmPin("");
           setError("Passcode don't match. Please try again.");
 
           setTimeout(() => setError(""), 2000);
@@ -143,7 +144,11 @@ export default function Createpasscode({ onDone }: any) {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    key === "del" ? deleteDigit() : pressDigit(key);
+                    if (key === "del") {
+                      deleteDigit();
+                    } else {
+                      pressDigit(key);
+                    }
                   }}
                   key={colIndex}
                   className="

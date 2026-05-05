@@ -20,7 +20,7 @@ export default function ThemeToggle() {
     };
 
     loadTheme();
-  }, []);
+  }, [setColorScheme]);
 
   const handleToggle = async (value: boolean) => {
     const newTheme: Theme = value ? "dark" : "light";

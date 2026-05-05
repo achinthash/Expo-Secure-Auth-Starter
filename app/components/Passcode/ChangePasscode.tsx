@@ -13,10 +13,10 @@ export default function ChangePasscode({ onDone }: any) {
   const [myPin, setMyPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   const currentPin = step === "create" ? myPin : confirmPin;
-  const { refreshPin, setHasPin } = useAuth();
+  const { setHasPin } = useAuth();
   const [error, setError] = useState("");
 
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
 
   const isDark = colorScheme === "dark";
 
@@ -49,6 +49,7 @@ export default function ChangePasscode({ onDone }: any) {
           await setHasPin(true);
           onDone();
         } else {
+          setConfirmPin("");
           setError("Passcode don't match. Please try again.");
           setTimeout(() => setError(""), 2000);
         }
@@ -132,7 +133,11 @@ export default function ChangePasscode({ onDone }: any) {
               return (
                 <TouchableOpacity
                   onPress={() => {
-                    key === "del" ? deleteDigit() : pressDigit(key);
+                    if (key === "del") {
+                      deleteDigit();
+                    } else {
+                      pressDigit(key);
+                    }
                   }}
                   key={colIndex}
                   className="

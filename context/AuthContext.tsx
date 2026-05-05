@@ -1,5 +1,4 @@
 import { getPin } from "@/utills/secureStorage";
-
 import {
   createContext,
   ReactNode,
@@ -25,21 +24,66 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    checkPin();
+    let isMounted = true;
+
+    const init = async () => {
+      try {
+        // small delay to avoid native race issues (important in release builds)
+        await new Promise((res) => setTimeout(res, 100));
+
+        const pin = await getPin();
+
+        if (!isMounted) return;
+
+        if (pin) {
+          setHasPin(true);
+          setIsUnlocked(false);
+        } else {
+          setHasPin(false);
+          setIsUnlocked(true);
+        }
+      } catch (e) {
+        console.log("Auth init error:", e);
+
+        if (!isMounted) return;
+
+        // safe fallback
+        setHasPin(false);
+        setIsUnlocked(true);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    init();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const checkPin = async () => {
-    const pin = await getPin();
+  const refreshPin = async () => {
+    try {
+      setIsLoading(true);
 
-    if (pin) {
-      setHasPin(true);
-      setIsUnlocked(false);
-    } else {
+      const pin = await getPin();
+
+      if (pin) {
+        setHasPin(true);
+        setIsUnlocked(false);
+      } else {
+        setHasPin(false);
+        setIsUnlocked(true);
+      }
+    } catch (e) {
+      console.log("refreshPin error:", e);
       setHasPin(false);
       setIsUnlocked(true);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -49,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isUnlocked,
         isLoading,
         setIsUnlocked,
-        refreshPin: checkPin,
+        refreshPin,
         setHasPin,
       }}
     >
